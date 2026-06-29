@@ -44,6 +44,35 @@ GitHub → POST `/webhook` → verify HMAC signature → if `issues`/`opened`, p
 
 7. **Test** — open an issue in the repo. A message appears in Slack.
 
+## Tracking repos you DON'T own (polling)
+
+You can't add a webhook to a repo without admin rights. To track those, the app
+can poll the GitHub REST API for new issues instead. Set:
+
+```
+POLL_REPOS=GoogleCloudPlatform/kubectl-ai          # comma-separated for multiple
+GITHUB_TOKEN=<token>                                 # strongly recommended
+POLL_INTERVAL_SECONDS=60                              # optional, default 60
+```
+
+- Only notifies issues created **after** the service starts (a restart won't replay old ones).
+- Pull requests are filtered out (the `/issues` endpoint returns both).
+- `GITHUB_WEBHOOK_SECRET` is optional in poll-only mode; set it only if you also
+  receive webhooks from repos you own.
+
+### Rate limits
+
+The poller makes 1 request per repo per poll cycle:
+`requests/hour = (3600 / POLL_INTERVAL_SECONDS) × number_of_repos`.
+
+| Mode | Limit |
+|---|---|
+| Unauthenticated | 60 req/hr per IP |
+| With `GITHUB_TOKEN` | 5,000 req/hr |
+
+One repo at 60s = 60 req/hr, which is exactly the unauthenticated cap — so add a
+`GITHUB_TOKEN` (fine-grained, public read is enough) for real headroom.
+
 ## Deploy to Railway
 
 The repo is Railway-ready (`railway.json` sets the start command and a
