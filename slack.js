@@ -12,6 +12,12 @@ export function buildSlackMessage({ issue, repoName, repoFullName, repoHtmlUrl, 
       : issue.body
     : "_No description provided._";
 
+  // Optionally @-mention a user on every notification. Slack needs the member
+  // ID in <@U…> form — a plain @name won't trigger a notification.
+  const mention = process.env.SLACK_MENTION_USER_ID
+    ? `<@${process.env.SLACK_MENTION_USER_ID}> `
+    : "";
+
   return {
     text: `New issue in ${repoFullName}: #${issue.number} ${issue.title}`,
     blocks: [
@@ -22,6 +28,14 @@ export function buildSlackMessage({ issue, repoName, repoFullName, repoHtmlUrl, 
           text: `🐛 New issue: ${repoName} #${issue.number}`,
         },
       },
+      ...(mention
+        ? [
+            {
+              type: "section",
+              text: { type: "mrkdwn", text: mention.trim() },
+            },
+          ]
+        : []),
       {
         type: "section",
         text: {
