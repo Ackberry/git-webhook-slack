@@ -52,7 +52,7 @@ can poll the GitHub REST API for new issues instead. Set:
 ```
 POLL_REPOS=GoogleCloudPlatform/kubectl-ai          # comma-separated for multiple
 GITHUB_TOKEN=<token>                                 # strongly recommended
-POLL_INTERVAL_SECONDS=60                              # optional, default 60
+POLL_INTERVAL_SECONDS=300                             # optional, default 300 (5 min)
 ```
 
 - Only notifies issues created **after** the service starts (a restart won't replay old ones).

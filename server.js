@@ -10,7 +10,7 @@ const POLL_REPOS = (process.env.POLL_REPOS || "")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
-const POLL_INTERVAL_SECONDS = Number(process.env.POLL_INTERVAL_SECONDS) || 60;
+const POLL_INTERVAL_SECONDS = Number(process.env.POLL_INTERVAL_SECONDS) || 300;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 const webhookEnabled = Boolean(GITHUB_WEBHOOK_SECRET);
